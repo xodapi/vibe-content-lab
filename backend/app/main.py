@@ -2,7 +2,7 @@ import hashlib
 import json
 import uuid
 from datetime import datetime, timedelta
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,10 +10,11 @@ from openai import OpenAI
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from rag.store import LocalChroma
+
 from .config import settings
 from .db import Estimate, Feedback, Generation, SessionLocal, init_db
 from .vibe_client import VibeApiError, VibeClient
-from rag.store import LocalChroma
 
 app = FastAPI(title="Vibe Content Lab", version="0.1.0")
 app.add_middleware(
@@ -50,10 +51,13 @@ def db_session():
         db.close()
 
 
+DbSession = Annotated[Session, Depends(db_session)]
+
+
 def estimate_cost(response: dict[str, Any]) -> float | None:
     for name in ("cost", "estimated_cost", "cost_rub", "total_cost"):
         value = response.get(name)
-        if isinstance(value, (int, float)):
+        if isinstance(value, int | float):
             return float(value)
     return None
 
@@ -106,7 +110,7 @@ def knowledge_answer(payload: SearchInput):
 
 
 @app.post("/api/generations/estimate")
-async def create_estimate(payload: EstimateInput, db: Session = Depends(db_session)):
+async def create_estimate(payload: EstimateInput, db: DbSession):
     request_payload = payload.model_dump(exclude={"extra"}) | payload.extra
     try:
         provider = await VibeClient().estimate(request_payload)
@@ -117,7 +121,10 @@ async def create_estimate(payload: EstimateInput, db: Session = Depends(db_sessi
     if cost is not None and cost > settings.max_request_budget_rub:
         raise HTTPException(
             status_code=422,
-            detail=f"Estimate {cost:.2f} ₽ exceeds Lab limit {settings.max_request_budget_rub:.2f} ₽.",
+            detail=(
+                f"Estimate {cost:.2f} ₽ exceeds Lab limit "
+                f"{settings.max_request_budget_rub:.2f} ₽."
+            ),
         )
 
     estimate_id = str(uuid.uuid4())
@@ -140,7 +147,7 @@ async def create_estimate(payload: EstimateInput, db: Session = Depends(db_sessi
 
 
 @app.post("/api/generations/{estimate_id}/confirm", status_code=status.HTTP_201_CREATED)
-async def confirm_generation(estimate_id: str, db: Session = Depends(db_session)):
+async def confirm_generation(estimate_id: str, db: DbSession):
     estimate = db.get(Estimate, estimate_id)
     if not estimate:
         raise HTTPException(status_code=404, detail="Estimate not found")
@@ -175,7 +182,7 @@ async def confirm_generation(estimate_id: str, db: Session = Depends(db_session)
 
 
 @app.post("/api/feedback", status_code=status.HTTP_201_CREATED)
-def create_feedback(payload: FeedbackInput, db: Session = Depends(db_session)):
+def create_feedback(payload: FeedbackInput, db: DbSession):
     if not db.get(Generation, payload.generation_id):
         raise HTTPException(status_code=404, detail="Generation not found")
     db.add(Feedback(**payload.model_dump()))
@@ -184,7 +191,7 @@ def create_feedback(payload: FeedbackInput, db: Session = Depends(db_session)):
 
 
 @app.post("/api/webhooks/vibe", status_code=status.HTTP_202_ACCEPTED)
-async def vibe_webhook(request: Request, db: Session = Depends(db_session)):
+async def vibe_webhook(request: Request, db: DbSession):
     raw = await request.body()
     signature = request.headers.get("X-Vibe-Signature")
     if not VibeClient.verified_webhook(raw, signature):

@@ -5,6 +5,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 from backend.app.config import settings
+
 from .store import LocalChroma, split_by_headings
 
 

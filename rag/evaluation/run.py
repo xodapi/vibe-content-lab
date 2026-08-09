@@ -13,7 +13,8 @@ def reciprocal_rank(results: list[dict], expected_sections: list[str]) -> float:
 
 
 def main() -> None:
-    cases = json.loads((Path(__file__).parent / "ground_truth.json").read_text(encoding="utf-8"))
+    cases_path = Path(__file__).parent / "ground_truth.json"
+    cases = json.loads(cases_path.read_text(encoding="utf-8"))
     store = LocalChroma()
     rows = []
     for case in cases:
@@ -25,7 +26,16 @@ def main() -> None:
 
     hit_at_4 = sum(row["hit_at_4"] for row in rows) / len(rows)
     mrr = sum(row["mrr"] for row in rows) / len(rows)
-    output = ["# Retrieval evaluation", "", f"- Cases: {len(rows)}", f"- Hit@4: {hit_at_4:.1%}", f"- MRR@4: {mrr:.3f}", "", "| Case | Hit@4 | RR |", "|---|---:|---:|"]
+    output = [
+        "# Retrieval evaluation",
+        "",
+        f"- Cases: {len(rows)}",
+        f"- Hit@4: {hit_at_4:.1%}",
+        f"- MRR@4: {mrr:.3f}",
+        "",
+        "| Case | Hit@4 | RR |",
+        "|---|---:|---:|",
+    ]
     output.extend(
         f"| {row['id']} | {'yes' if row['hit_at_4'] else 'no'} | {row['mrr']:.3f} |"
         for row in rows

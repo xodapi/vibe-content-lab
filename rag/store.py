@@ -1,6 +1,6 @@
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 import chromadb
 from openai import OpenAI
@@ -88,6 +88,6 @@ class LocalChroma:
                 "distance": distance,
             }
             for document, metadata, distance in zip(
-                result["documents"][0], result["metadatas"][0], result["distances"][0]
+                result["documents"][0], result["metadatas"][0], result["distances"][0], strict=False
             )
         ]
