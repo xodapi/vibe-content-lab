@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+node_modules/
+dist/
+data/
+chroma/
+*.sqlite*
+.env.*
+!.env.example
