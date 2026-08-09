@@ -6,6 +6,7 @@ node_modules/
 dist/
 data/
 chroma/
+dify/generated/
 *.sqlite*
 .env.*
 !.env.example

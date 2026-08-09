@@ -8,7 +8,8 @@ from .ingest import fetch_docs
 
 async def main() -> None:
     text = await fetch_docs()
-    target = Path(__file__).parents[1] / "dify" / "vibemarketolog-public-agent-api.md"
+    target = Path(__file__).parents[1] / "dify" / "generated" / "public-agent-api.md"
+    target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(
         "# Public Agent API documentation source\n\n"
         "Source: https://lk.vibemarketolog.ru/docs/agent-api\n\n"
