@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    env_file: /opt/vibe-content-lab/.env
+    env_file: ${LAB_ENV_FILE:-.env}
     restart: unless-stopped
     volumes:
       - lab_data:/data

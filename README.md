@@ -30,6 +30,27 @@ This is an independent technical lab, not a product of VibeMarketolog and not a 
 
 ## Setup
 
+## Development harness
+
+On Windows, all routine work is behind one command:
+
+```powershell
+.\scripts\harness.ps1 doctor     # tool and non-secret configuration status
+.\scripts\harness.ps1 bootstrap  # isolated Python environment + locked UI dependencies
+.\scripts\harness.ps1 check      # compile, Ruff, JSON validation, React production build
+.\scripts\harness.ps1 test       # unit tests, no API keys and no paid requests
+.\scripts\harness.ps1 api        # FastAPI on localhost:8000
+.\scripts\harness.ps1 ui         # Vite UI on localhost:5173
+.\scripts\harness.ps1 index      # fetch public docs and build Chroma index
+.\scripts\harness.ps1 eval       # evaluate retrieval against ground truth
+```
+
+`bootstrap`, `check`, and `test` work without API keys. `index` and the LLM answer
+endpoint require a separate OpenAI key in local `.env`; paid Vibe requests additionally
+require an explicit estimate and confirmation.
+
+## Server setup
+
 1. Create `/opt/vibe-content-lab/.env` on the server using `.env.example`, then `chmod 600` it.
 2. Set a separate OpenAI project key and a Vibe API key. Do not reuse Factory credentials.
 3. Start with `docker compose --env-file /opt/vibe-content-lab/.env up -d --build`.
