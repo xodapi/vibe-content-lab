@@ -1,0 +1,50 @@
+[
+  {
+    "id": "auth-bearer",
+    "question": "Какой заголовок авторизации нужен для Agent API?",
+    "required_terms": ["Authorization", "Bearer"],
+    "expected_sections": ["Аутентификация"]
+  },
+  {
+    "id": "dry-run",
+    "question": "Как получить смету без списания денег?",
+    "required_terms": ["/generate/estimate", "списания"],
+    "expected_sections": ["Dry-run"]
+  },
+  {
+    "id": "strict",
+    "question": "Как защититься от несовместимых полей до списания?",
+    "required_terms": ["strict", "списания"],
+    "expected_sections": ["Strict-mode"]
+  },
+  {
+    "id": "idempotency",
+    "question": "Как безопасно повторить запрос генерации после сетевой ошибки?",
+    "required_terms": ["idempotency", "409"],
+    "expected_sections": ["Повторы запросов"]
+  },
+  {
+    "id": "webhook-signature",
+    "question": "Как проверить подпись webhook callback?",
+    "required_terms": ["HMAC", "SHA-256"],
+    "expected_sections": ["Верификация подписи"]
+  },
+  {
+    "id": "async-status",
+    "question": "Как получить результат асинхронной видео-генерации?",
+    "required_terms": ["/generation/", "status"],
+    "expected_sections": ["Поллинг"]
+  },
+  {
+    "id": "permissions",
+    "question": "Что вернётся при отсутствии требуемого scope?",
+    "required_terms": ["403", "insufficient_scope"],
+    "expected_sections": ["Лимиты и скоупы"]
+  },
+  {
+    "id": "media-url",
+    "question": "Какой URL результата стоит показывать пользователю?",
+    "required_terms": ["display_url", "7 дней"],
+    "expected_sections": ["Поллинг"]
+  }
+]

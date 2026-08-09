@@ -1,0 +1,20 @@
+:root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #172033; background: #f4f7fb; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 900px; margin: 0 auto; padding: 52px 24px 80px; }
+header { margin-bottom: 36px; }
+.eyebrow { color: #4c6fff; font-size: .72rem; font-weight: 800; letter-spacing: .11em; }
+h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); letter-spacing: -.06em; margin: 8px 0; }
+h2 { margin-top: 0; }
+section { background: white; border: 1px solid #dfe6f1; border-radius: 16px; padding: 28px; margin: 20px 0; box-shadow: 0 8px 30px #1720330a; }
+form { display: grid; gap: 15px; }
+label { display: grid; gap: 7px; font-weight: 650; }
+input, textarea, select { font: inherit; padding: 11px; border: 1px solid #bfc9da; border-radius: 8px; }
+textarea { min-height: 105px; resize: vertical; }
+button { justify-self: start; background: #2949d3; color: white; border: 0; border-radius: 8px; padding: 11px 16px; font-weight: 700; cursor: pointer; }
+button:disabled { opacity: .6; cursor: wait; }
+.danger { background: #a31e34; }
+aside { border-left: 4px solid #f0b429; background: #fff8e1; margin-top: 18px; padding: 16px; border-radius: 6px; }
+.answer { background: #f6f8fc; padding: 16px; margin-top: 18px; border-radius: 8px; white-space: pre-wrap; }
+.error { color: #a31e34; }.message { font-weight: 650; }
+a { color: #2949d3; }

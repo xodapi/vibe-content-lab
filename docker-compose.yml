@@ -1,0 +1,52 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: /opt/vibe-content-lab/.env
+    restart: unless-stopped
+    volumes:
+      - lab_data:/data
+    mem_limit: 900m
+    cpus: 1.0
+    ports:
+      - "127.0.0.1:18080:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    mem_limit: 80m
+    cpus: 0.25
+    ports:
+      - "127.0.0.1:18081:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:1.107.4
+    restart: unless-stopped
+    environment:
+      N8N_HOST: n8n.lab.syntog.ru
+      N8N_PROTOCOL: https
+      N8N_EDITOR_BASE_URL: https://n8n.lab.syntog.ru
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      GENERIC_TIMEZONE: Europe/Moscow
+      N8N_DIAGNOSTICS_ENABLED: "false"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    mem_limit: 600m
+    cpus: 0.75
+    ports:
+      - "127.0.0.1:15678:5678"
+
+volumes:
+  lab_data:
+  n8n_data:

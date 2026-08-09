@@ -1,0 +1,116 @@
+{
+  "name": "Content Lab — Daily API Knowledge Digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "schedule",
+      "name": "Weekdays 09:00 Moscow",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api:8000/api/knowledge/answer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"question\":\"Какие практические правила безопасной интеграции Agent API стоит проверить перед генерацией контента?\",\"limit\":4}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "ask-rag",
+      "name": "Ask public-docs RAG",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -180,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const today = new Date().toLocaleDateString('ru-RU', { timeZone: 'Europe/Moscow' });\nconst answer = $json.answer || 'RAG не вернул ответ.';\nconst sources = ($json.sources || []).map((s, i) => `${i + 1}. ${s.section}`).join('\\n');\nreturn [{ json: { message: `Content Lab · ${today}\\n\\n${answer}\\n\\nИсточники:\\n${sources}` } }];"
+      },
+      "id": "format",
+      "name": "Format Telegram digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "id": "telegram",
+      "name": "Send to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        0
+      ],
+      "webhookId": ""
+    }
+  ],
+  "connections": {
+    "Weekdays 09:00 Moscow": {
+      "main": [
+        [
+          {
+            "node": "Ask public-docs RAG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask public-docs RAG": {
+      "main": [
+        [
+          {
+            "node": "Format Telegram digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Telegram digest": {
+      "main": [
+        [
+          {
+            "node": "Send to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "description": "Uses the Lab RAG API to deliver a weekday safety-and-integration note to Telegram. Import it, attach a Telegram credential, run it once manually, then activate it."
+  }
+}

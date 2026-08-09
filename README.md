@@ -15,7 +15,7 @@ This is an independent technical lab, not a product of VibeMarketolog and not a 
 | `backend/` | FastAPI, SQLite audit trail, Vibe API adapter, HMAC webhook validation, explicit cost approval |
 | `frontend/` | React/Vite internal UI for search, estimate, confirmation and feedback |
 | `n8n/` | importable scheduled health-and-digest workflow, Telegram delivery |
-| `dify/` | import instructions and DSL for a citation-first documentation assistant |
+| `dify/` | Dify Cloud instructions, citation-first system prompt and acceptance checks |
 | `deploy/` | Docker Compose, nginx templates, resource limits and operational runbook |
 
 ## Security controls
@@ -24,7 +24,9 @@ This is an independent technical lab, not a product of VibeMarketolog and not a 
 - The backend calls `/generate/estimate` first. `POST /generations/confirm` needs the returned one-time estimate ID.
 - The Vibe API key should have only `read` and `generate` scopes, a small `daily_spend_limit`, and an IP allowlist for the server.
 - Incoming generation webhooks are validated with `X-Vibe-Signature` and a constant-time HMAC comparison.
-- `n8n.lab.syntog.ru` and `dify.lab.syntog.ru` are private operator interfaces behind nginx Basic Auth.
+- `n8n.lab.syntog.ru` is a private operator interface behind nginx Basic Auth.
+- The Dify component uses the separate private Dify Cloud workspace, rather than copying
+  Factory credentials or trying to run Dify below its vendor memory minimum.
 
 ## Setup
 
