@@ -6,6 +6,15 @@ Portfolio-grade internal AI tool for a public API documentation corpus. It demon
 
 This is an independent technical lab, not a product of VibeMarketolog and not a claim of affiliation. The knowledge base is built only from its public Agent API documentation. The application does not issue a paid generation until an operator reviews a free `/generate/estimate` result and explicitly confirms it.
 
+## Live deployment
+
+- Demo: [lab.syntog.ru](https://lab.syntog.ru), protected with Basic Auth.
+- Operator automation UI: `n8n.lab.syntog.ru`, protected for operator access.
+
+The deployment demonstrates Docker, nginx reverse proxying, TLS, Basic Auth and
+loopback-only application ports. Provider credentials are intentionally absent until a
+separate project key and spending limits are configured.
+
 ## Components
 
 | Component | Evidence of skill |
