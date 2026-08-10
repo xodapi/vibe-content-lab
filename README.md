@@ -15,6 +15,9 @@ The deployment demonstrates Docker, nginx reverse proxying, TLS, Basic Auth and
 loopback-only application ports. Provider credentials are intentionally absent until a
 separate project key and spending limits are configured.
 
+For a qualification-focused evidence map, see
+[`docs/PORTFOLIO_EVIDENCE_RU.md`](docs/PORTFOLIO_EVIDENCE_RU.md).
+
 ## Components
 
 | Component | Evidence of skill |
